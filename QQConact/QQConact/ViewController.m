@@ -8,8 +8,12 @@
 
 #import "ViewController.h"
 #import "FriendGroup.h"
+#import "Friend.h"
+#import "FriendCell.h"
+#import "HeaderView.h"
 
-@interface ViewController ()
+
+@interface ViewController ()<HeaderViewDelegate>
     @property (nonatomic,strong) NSArray *groups;
 @end
 
@@ -17,6 +21,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    // 每一行cell的高度
+    self.tableView.rowHeight = 50;
+    // 每一组头部控件的高度
+    self.tableView.sectionHeaderHeight = 44;
 }
 
 #pragma mark 懒加载
@@ -24,8 +32,7 @@
     if(_groups == nil){
         
         NSArray *dictArray = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"friends.plist" ofType:nil]];
-        NSLog(@"%d",dictArray.count);
-        NSMutableArray *gourpArray = [NSMutableArray array];
+                NSMutableArray *gourpArray = [NSMutableArray array];
         for(NSDictionary *dict in dictArray){
             FriendGroup *fgoup = [FriendGroup gourpWithDict:dict];
             [gourpArray addObject:fgoup];
@@ -41,24 +48,34 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     FriendGroup *group = self.groups[section];
-    return group.friends.count;
+    return (group.isOpened ? group.friends.count : 0);
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    static NSString *ID = @"friend";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
-    
-    if(cell == nil){
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
-    }
-    
-    []
-    
-    return nil;
+    //1.获取cell
+    FriendCell *cell = [FriendCell friendCellWithTableView:tableView];
+    //2.设置数据
+    FriendGroup *group = self.groups[indexPath.section];
+    Friend *fd = group.friends[indexPath.row];
+    cell.friendData = fd;
+    return cell;
 }
 
+/**
+ *  设置头部控件
+ */
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    
+    // 1.创建头部控件
+    HeaderView *header = [HeaderView headerViewWithTableView:tableView];
+    header.delegate = self;
+    // 2.给header设置数据(给header传递模型)
+    header.group = self.groups[section];
+    return header;
+}
 
-
+-(void)headerViewDidClickTitle:(HeaderView *)headerView{
+    [self.tableView reloadData];
+}
 @end

@@ -14,6 +14,7 @@
 @property (nonatomic,copy) NSString *name;
 @property (nonatomic,assign) int online;
 @property (nonatomic,strong) NSArray *friends;
+@property (nonatomic,assign,getter=isOpened) BOOL open;
 
 +(instancetype)gourpWithDict:(NSDictionary *)dict;
 -(instancetype)initWithDict:(NSDictionary *)dict;
