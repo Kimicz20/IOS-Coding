@@ -1,5 +1,5 @@
 //
-//  Friend.h
+//  FriendGroup.h
 //  QQConact
 //
 //  Created by Geek on 16/5/19.
@@ -7,15 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+@class Friend;
 
-@interface Friend : NSObject
+@interface FriendGroup : NSObject
 
-@property (nonatomic,copy) NSString *icon;
 @property (nonatomic,copy) NSString *name;
-@property (nonatomic,copy) NSString *intro;
-@property (nonatomic,assign,getter=isVip) BOOL vip;
+@property (nonatomic,assign) int online;
+@property (nonatomic,strong) NSArray *friends;
 
-+(instancetype)friendWithDict:(NSDictionary *)dict;
++(instancetype)gourpWithDict:(NSDictionary *)dict;
 -(instancetype)initWithDict:(NSDictionary *)dict;
 
 @end
